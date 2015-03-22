@@ -1,0 +1,107 @@
+f_fibonacci:
+
+PUSH {lr}
+SUB sp, sp, #8
+LDR r4, [sp, #12]
+LDR r5, =1
+CMP r4, r5
+MOVLE r4, #1
+MOVGT r4, #0
+CMP r4, #0
+BEQ L0
+LDR r4, [sp, #12]
+MOV r0, r4
+ADD sp, sp, #4
+POP {pc}
+B L1
+L0:
+L1:
+
+
+LDRSB r4, [sp, #16]
+STRB r4, [sp, #-1]!
+LDR r4, [sp, #13]
+LDR r5, =1
+SUBS r4, r4, r5
+BLVS p_throw_overflow_error
+STR r4, [sp, #-4]!
+BL f_fibonacci
+ADD sp, sp, #5
+MOV r4, r0
+STR r4, [sp, #4]
+
+
+LDRSB r4, [sp, #16]
+CMP r4, #0
+BEQ L2
+LDR r4, [sp, #4]
+MOV r0, r4
+BL p_print_int
+
+
+LDR r4, =msg_0
+MOV r0, r4
+BL p_print_string
+B L3
+L2:
+L3:
+
+
+MOV r4, #0
+STRB r4, [sp, #-1]!
+LDR r4, [sp, #13]
+LDR r5, =2
+SUBS r4, r4, r5
+BLVS p_throw_overflow_error
+STR r4, [sp, #-4]!
+BL f_fibonacci
+ADD sp, sp, #5
+MOV r4, r0
+STR r4, [sp]
+
+
+LDR r4, [sp, #4]
+LDR r5, [sp]
+ADDS r4, r4, r5
+BLVS p_throw_overflow_error
+MOV r0, r4
+POP {pc}
+POP {pc}
+.ltorg
+
+main:
+PUSH {lr}
+SUB sp, sp, #4
+LDR r4, =msg_1
+MOV r0, r4
+BL p_print_string
+BL p_print_ln
+
+
+LDR r4, =msg_2
+MOV r0, r4
+BL p_print_string
+
+
+MOV r4, #1
+STRB r4, [sp, #-1]!
+LDR r4, =19
+STR r4, [sp, #-4]!
+BL f_fibonacci
+ADD sp, sp, #5
+MOV r4, r0
+STR r4, [sp]
+
+
+LDR r4, [sp]
+MOV r0, r4
+BL p_print_int
+
+
+LDR r4, =msg_3
+MOV r0, r4
+BL p_print_string
+BL p_print_ln
+ADD sp, sp, #4
+LDR r0, =0
+POP {pc}
